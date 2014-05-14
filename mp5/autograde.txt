@@ -1,0 +1,265 @@
+== CS 241 Autograder Note: ==
+This autograder is a preliminary assessment of your program's correctness. Your
+grade may change UP OR DOWN based on the CORRECTNESS OF YOUR PROGRAM. We make every effort to ensure
+that our autograder is 'smart' enough to not count off for simple things like grammar but, in doing so,
+we may inadvertently allow for incorrect code to be counted as correct. If we have to change our script
+to better reflect the CORRECTNESS OF YOUR PROGRAM, we will run the script on EVERY PROGRAM and update
+EVERY AUTOGRADER OUTPUT to ensure fairness to all students. Thanks for understanding! - CS 241 Staff
+
+(Please note, this autograder does not reflect a late submission penalty. This will be applied on Compass.)
+
+
+=== MP5 CS 241 Autograder Summary ===
+Program Execution Score (90% weight): 14.0/18.0 (77.77778%)
+Program Heap Freed (5% weight): FAILED (0%)
+Correct Memory Usage (5% weight): FAILED (0%)
+
+
+=== MP5 CS 241 Scoring Breakdown ===
+--- Details for "MP5" ---
+Total "MP5" Sub-Score: 14.0
+	... Details for "MP5", "Simple One Rule"...
+	Total "MP5", "Simple One Rule" Sub-Score: 1.0
+		Passed
+	... Details for "MP5", "Default Makefile"...
+	Total "MP5", "Default Makefile" Sub-Score: 1.0
+		Passed
+	... Details for "MP5", "Random cmd-line Option Ordering"...
+	Total "MP5", "Random cmd-line Option Ordering" Sub-Score: 1.0
+		Passed
+	... Details for "MP5", "Multiple Targets"...
+	Total "MP5", "Multiple Targets" Sub-Score: 1.0
+		Passed
+	... Details for "MP5", "Respects Dependencies"...
+	Total "MP5", "Respects Dependencies" Sub-Score: 3.0
+		Passed
+	... Details for "MP5", "Parallel Execution "...
+	Total "MP5", "Parallel Execution " Sub-Score: 4.0
+		Passed
+	... Details for "MP5", "Lazy Threads Sleep"...
+	Total "MP5", "Lazy Threads Sleep" Sub-Score: 0.0
+		Failed
+	... Details for "MP5", "Test for file timestamps"...
+	Total "MP5", "Test for file timestamps" Sub-Score: 2.0
+		Passed
+	... Details for "MP5", "Exit after Error"...
+	Total "MP5", "Exit after Error" Sub-Score: 1.0
+		Passed
+
+
+
+
+=== MP5 CS 241 Raw Autograder Log ===
+[config]: Initializing the AssignmentGrader class "mp5"...
+[config]: Initializing the SegmentGrader class "mp5_1". Loading...
+[config]: Assignment initalization complete!
+[info]: The submission in "/srv/local/cs241grader/release/yang-svn/fekete2" for assignment "mp5" is ready to be graded. Running grading tasks...
+[info]: Beginning to grade assignment "MP5 CS 241"...
+[fine]: Launching assignment-specific code for "MP5 CS 241", "MP5 CS 241"...
+[finer]: Running command [make -f Makefile] with a timeout of 60000ms.
+[finer]: Completed execution of "make" with exit code = 0.
+[finest]: [stdout:1]: gcc -std=c99 -g -Wall -c parmake.c -o parmake.o
+[finest]: [stdout:2]: gcc -std=c99 -g -Wall -c queue.c -o queue.o
+[finest]: [stdout:3]: gcc -std=c99 -g -Wall -c parser.c -o parser.o
+[finest]: [stdout:4]: gcc -std=c99 -g -Wall -c rule.c -o rule.o
+[finest]: [stdout:5]: gcc -std=c99 -pthread -Wall parmake.o queue.o parser.o rule.o -o parmake
+[finest]: [stderr:1]: parmake.c: In function ârun_commandsâ:
+[finest]: [stderr:2]: parmake.c:195: warning: unused variable âiâ
+[finest]: [stderr:3]: parmake.c: In function âmainâ:
+[finest]: [stderr:4]: parmake.c:454: warning: unused variable âjâ
+[fine]: Launching segment-specific code for "MP5 CS 241", "MP5 CS 241", "MP5"...
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Simple One Rule"...
+[finer]: Running command [./parmake -f 1.txt] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: Abcde
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern found in line 1 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Default Makefile"...
+[finer]: Running command [./parmake] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: Abcde
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern found in line 1 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Random cmd-line Option Ordering"...
+[finer]: Running command [./parmake -j 1 -f 1.txt A] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: Abcde
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern found in line 1 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Multiple Targets"...
+[finer]: Running command [./parmake -f 2.txt A B] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: Abcde
+[finest]: [stdout:2]: Bcde
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern found in line 1 of standard output.
+[finer]: Testing for pattern "Bcde" in process output.
+[finer]: Pattern found in line 2 of standard output.
+[finer]: Testing for pattern "Cde" in process output.
+[finer]: Pattern was not found in process output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Respects Dependencies"...
+[finer]: Running command [./parmake -f depend.makefile] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: 3673F212-1A29-4967-8497-BB60533D9528
+[finest]: [stdout:2]: FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA
+[finest]: [stdout:3]: c
+[finest]: [stdout:4]: BDD851A7-D642-4296-97AE-935B56E180CD
+[finer]: Testing for string "BDD851A7-D642-4296-97AE-935B56E180CD" in process output.
+[finer]: String found in line 4 of standard output.
+[finer]: Testing for string "FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA" in process output.
+[finer]: String found in line 2 of standard output.
+[finer]: Testing for string "3673F212-1A29-4967-8497-BB60533D9528" in process output.
+[finer]: String found in line 1 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Parallel Execution "...
+[finer]: Running command [./parmake -j 4 -f par.makefile] with a timeout of 5500ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA
+[finest]: [stdout:2]: 3673F212-1A29-4967-8497-BB60533D9528
+[finest]: [stdout:3]: C92F17D8-4CA2-418C-87CB-B7C22B37D0A2
+[finest]: [stdout:4]: BDD851A7-D642-4296-97AE-935B56E180CD
+[finer]: Testing for string "BDD851A7-D642-4296-97AE-935B56E180CD" in process output.
+[finer]: String found in line 4 of standard output.
+[finer]: Testing for string "FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA" in process output.
+[finer]: String found in line 1 of standard output.
+[finer]: Testing for string "3673F212-1A29-4967-8497-BB60533D9528" in process output.
+[finer]: String found in line 2 of standard output.
+[finer]: Testing for string "C92F17D8-4CA2-418C-87CB-B7C22B37D0A2" in process output.
+[finer]: String found in line 3 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Lazy Threads Sleep"...
+[finer]: Running command [./parmake -j 10 -f sleep.makefile] with a timeout of 10000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: %CPU
+[finest]: [stdout:2]:  201
+[finer]: Testing for string "%CPU" in process output.
+[finer]: String found in line 1 of standard output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Test for file timestamps"...
+[finer]: Running command [./parmake -f filetest2.makefile] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finest]: [stdout:1]: Abcde
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern found in line 1 of standard output.
+[finer]: Running command [./parmake -f filetest2.makefile] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 0.
+[finer]: Testing for pattern "Abcde" in process output.
+[finer]: Pattern was not found in process output.
+[fine]: Launching element-specific code for "MP5 CS 241", "MP5 CS 241", "MP5", "Exit after Error"...
+[finer]: Running command [./parmake -f err.txt] with a timeout of 2000ms.
+[finer]: Completed execution of "./parmake" with exit code = 1.
+[finer]: Testing for pattern "z" in process output.
+[finer]: Pattern was not found in process output.
+[fine]: Launching memory grader code for "MP5"...
+[finer]: Running command [valgrind --leak-check=full --show-reachable=yes --num-callers=20 --child-silent-after-fork=yes ./parmake -f par.makefile] with a timeout of 60000ms.
+[finer]: Completed execution of "valgrind" with exit code = 0.
+[finest]: [stdout:1]: FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA
+[finest]: [stdout:2]: 3673F212-1A29-4967-8497-BB60533D9528
+[finest]: [stdout:3]: C92F17D8-4CA2-418C-87CB-B7C22B37D0A2
+[finest]: [stderr:1]: ==1837== Memcheck, a memory error detector
+[finest]: [stderr:2]: ==1837== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+[finest]: [stderr:3]: ==1837== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+[finest]: [stderr:4]: ==1837== Command: ./parmake -f par.makefile
+[finest]: [stderr:5]: ==1837== 
+[finest]: [stderr:6]: ==1837== Thread 2:
+[finest]: [stderr:7]: ==1837== Conditional jump or move depends on uninitialised value(s)
+[finest]: [stderr:8]: ==1837==    at 0x401645: run_rule (parmake.c:333)
+[finest]: [stderr:9]: ==1837==    by 0x4017A0: thread_dispatch (parmake.c:389)
+[finest]: [stderr:10]: ==1837==    by 0x329BA079D0: start_thread (in /lib64/libpthread-2.12.so)
+[finest]: [stderr:11]: ==1837==    by 0x5A366FF: ???
+[finest]: [stderr:12]: ==1837== 
+[finest]: [stderr:13]: ==1837== 
+[finest]: [stderr:14]: ==1837== HEAP SUMMARY:
+[finest]: [stderr:15]: ==1837==     in use at exit: 200 bytes in 1 blocks
+[finest]: [stderr:16]: ==1837==   total heap usage: 168 allocs, 167 frees, 7,452 bytes allocated
+[finest]: [stderr:17]: ==1837== 
+[finest]: [stderr:18]: ==1837== Thread 1:
+[finest]: [stderr:19]: ==1837== 200 bytes in 1 blocks are definitely lost in loss record 1 of 1
+[finest]: [stderr:20]: ==1837==    at 0x4A069EE: malloc (vg_replace_malloc.c:270)
+[finest]: [stderr:21]: ==1837==    by 0x4018E6: parsed_new_command (parmake.c:429)
+[finest]: [stderr:22]: ==1837==    by 0x402625: notifyRules (parser.c:173)
+[finest]: [stderr:23]: ==1837==    by 0x402B93: parser_parse_makefile (parser.c:283)
+[finest]: [stderr:24]: ==1837==    by 0x401B5C: main (parmake.c:515)
+[finest]: [stderr:25]: ==1837== 
+[finest]: [stderr:26]: ==1837== LEAK SUMMARY:
+[finest]: [stderr:27]: ==1837==    definitely lost: 200 bytes in 1 blocks
+[finest]: [stderr:28]: ==1837==    indirectly lost: 0 bytes in 0 blocks
+[finest]: [stderr:29]: ==1837==      possibly lost: 0 bytes in 0 blocks
+[finest]: [stderr:30]: ==1837==    still reachable: 0 bytes in 0 blocks
+[finest]: [stderr:31]: ==1837==         suppressed: 0 bytes in 0 blocks
+[finest]: [stderr:32]: ==1837== 
+[finest]: [stderr:33]: ==1837== For counts of detected and suppressed errors, rerun with: -v
+[finest]: [stderr:34]: ==1837== Use --track-origins=yes to see where uninitialised values come from
+[finest]: [stderr:35]: ==1837== ERROR SUMMARY: 10 errors from 2 contexts (suppressed: 6 from 6)
+[finer]: Testing for string "All heap blocks were freed -- no leaks are possible" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "pthread" in process output.
+[finer]: String found in line 10 of standard error.
+[finer]: Testing for string "still reachable: 1,584 bytes in 5 blocks" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "pthread" in process output.
+[finer]: String found in line 10 of standard error.
+[finer]: Testing for string "still reachable: 0 bytes in 0 blocks" in process output.
+[finer]: String found in line 30 of standard error.
+[finer]: Testing for string "definitely lost: 0 bytes in 0 blocks" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "pthread" in process output.
+[finer]: String found in line 10 of standard error.
+[finer]: Testing for string "still reachable: 1,528 bytes in 4 blocks" in process output.
+[finer]: String was not found in process output.
+[warning]: Not all memory was freed by target program!
+[fine]: Launching memory grader code for "MP5"...
+[finer]: Running command [valgrind --leak-check=full --show-reachable=yes --num-callers=20 --child-silent-after-fork=yes ./parmake -f par.makefile] with a timeout of 60000ms.
+[finer]: Completed execution of "valgrind" with exit code = 0.
+[finest]: [stdout:1]: FC0C431D-1EDE-4806-BD0D-7BFAC85B41EA
+[finest]: [stdout:2]: 3673F212-1A29-4967-8497-BB60533D9528
+[finest]: [stdout:3]: C92F17D8-4CA2-418C-87CB-B7C22B37D0A2
+[finest]: [stderr:1]: ==1858== Memcheck, a memory error detector
+[finest]: [stderr:2]: ==1858== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+[finest]: [stderr:3]: ==1858== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+[finest]: [stderr:4]: ==1858== Command: ./parmake -f par.makefile
+[finest]: [stderr:5]: ==1858== 
+[finest]: [stderr:6]: ==1858== Thread 2:
+[finest]: [stderr:7]: ==1858== Conditional jump or move depends on uninitialised value(s)
+[finest]: [stderr:8]: ==1858==    at 0x401645: run_rule (parmake.c:333)
+[finest]: [stderr:9]: ==1858==    by 0x4017A0: thread_dispatch (parmake.c:389)
+[finest]: [stderr:10]: ==1858==    by 0x329BA079D0: start_thread (in /lib64/libpthread-2.12.so)
+[finest]: [stderr:11]: ==1858==    by 0x5A366FF: ???
+[finest]: [stderr:12]: ==1858== 
+[finest]: [stderr:13]: ==1858== 
+[finest]: [stderr:14]: ==1858== HEAP SUMMARY:
+[finest]: [stderr:15]: ==1858==     in use at exit: 200 bytes in 1 blocks
+[finest]: [stderr:16]: ==1858==   total heap usage: 168 allocs, 167 frees, 7,452 bytes allocated
+[finest]: [stderr:17]: ==1858== 
+[finest]: [stderr:18]: ==1858== Thread 1:
+[finest]: [stderr:19]: ==1858== 200 bytes in 1 blocks are definitely lost in loss record 1 of 1
+[finest]: [stderr:20]: ==1858==    at 0x4A069EE: malloc (vg_replace_malloc.c:270)
+[finest]: [stderr:21]: ==1858==    by 0x4018E6: parsed_new_command (parmake.c:429)
+[finest]: [stderr:22]: ==1858==    by 0x402625: notifyRules (parser.c:173)
+[finest]: [stderr:23]: ==1858==    by 0x402B93: parser_parse_makefile (parser.c:283)
+[finest]: [stderr:24]: ==1858==    by 0x401B5C: main (parmake.c:515)
+[finest]: [stderr:25]: ==1858== 
+[finest]: [stderr:26]: ==1858== LEAK SUMMARY:
+[finest]: [stderr:27]: ==1858==    definitely lost: 200 bytes in 1 blocks
+[finest]: [stderr:28]: ==1858==    indirectly lost: 0 bytes in 0 blocks
+[finest]: [stderr:29]: ==1858==      possibly lost: 0 bytes in 0 blocks
+[finest]: [stderr:30]: ==1858==    still reachable: 0 bytes in 0 blocks
+[finest]: [stderr:31]: ==1858==         suppressed: 0 bytes in 0 blocks
+[finest]: [stderr:32]: ==1858== 
+[finest]: [stderr:33]: ==1858== For counts of detected and suppressed errors, rerun with: -v
+[finest]: [stderr:34]: ==1858== Use --track-origins=yes to see where uninitialised values come from
+[finest]: [stderr:35]: ==1858== ERROR SUMMARY: 10 errors from 2 contexts (suppressed: 6 from 6)
+[finer]: Testing for string "ERROR SUMMARY: 0 errors from 0 contexts" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "ERROR SUMMARY: 1 errors from 1 contexts" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "pthread" in process output.
+[finer]: String found in line 10 of standard error.
+[finer]: Testing for string "still reachable: 1,584 bytes in 5 blocks" in process output.
+[finer]: String was not found in process output.
+[finer]: Testing for string "pthread" in process output.
+[finer]: String found in line 10 of standard error.
+[finer]: Testing for string "still reachable: 0 bytes in 0 blocks" in process output.
+[finer]: String found in line 30 of standard error.
+[finer]: Testing for string "definitely lost: 0 bytes in 0 blocks" in process output.
+[finer]: String was not found in process output.
+[warning]: Not all memory was freed by target program!
+[fine]: The assignment-specific grade() method completed successfully.
+[info]: The submission in "/srv/local/cs241grader/release/yang-svn/fekete2" for assignment "mp5" has finished grading. Running final tasks...

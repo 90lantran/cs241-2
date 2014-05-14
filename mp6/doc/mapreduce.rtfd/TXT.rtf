@@ -1,0 +1,758 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;\f1\fmodern\fcharset0 Courier;\f2\fswiss\fcharset0 Helvetica;
+\f3\fmodern\fcharset0 Courier-Oblique;\f4\fmodern\fcharset0 Courier-Bold;}
+{\colortbl;\red255\green255\blue255;\red251\green0\blue7;\red254\green191\blue193;\red0\green0\blue109;
+\red0\green0\blue233;\red213\green213\blue213;\red234\green234\blue234;\red0\green0\blue0;\red109\green109\blue109;
+}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}}
+{\info
+{\title CS 241}}\vieww28600\viewh16520\viewkind0
+\deftab720
+\pard\pardeftab720\sa321
+
+\f0\b\fs48 \cf0 MP6: MapReduce\
+\pard\pardeftab720\sa440
+
+\fs44 \cf0 Due: Wednesday, April 23, 2014\
+\pard\pardeftab720\sa120
+
+\b0\fs24 \cf0 \
+\pard\pardeftab720\qc
+
+\b\fs56 \cf2 \cb3 IMPORTANT\
+\pard\pardeftab720\qc
+
+\b0\fs24 \cf0 You will be using 
+\f1 \cf4 fork()
+\f0 \cf0  in this MP. You should understand what it means to {\field{\*\fldinst{HYPERLINK "http://en.wikipedia.org/wiki/Fork_bomb"}}{\fldrslt \cf5 \ul \ulc5 fork bomb}}.\
+\
+If you fork bomb the nightly autograder, you will be excluded from all future nightly autograders for this MP. You will be notified of this.\
+If you fork bomb the final autograder, you will get a 0 for this MP. No exceptions!\
+Once a fork bomb is detected, the autograder and all the other processes die. So nightly autograders may not always get out overnight.\
+\
+\pard\pardeftab720\qc
+
+\b \cf0 Make sure to always run all five testers before committing your code.
+\b0 \
+\pard\pardeftab720\sa398
+
+\b\fs48 \cf0 \cb1 Introduction\
+\pard\pardeftab720\sa240
+
+\b0\fs24 \cf0 In 2004, Google developed a general framework for processing large data sets on clusters of computers. We recommend you read the link {\field{\*\fldinst{HYPERLINK "http://en.wikipedia.org/wiki/MapReduce"}}{\fldrslt \cf5 \ul \ulc5 MapReduce on Wikipedia}} for some background information. You will also encounter these two concepts when you learn functional programming in CS421. However, we will explain everything you need to know below.\
+To explain what MapReduce does, we'll use a small dataset (the first few lines of a famous poem by Robert Frost):\
+\pard\pardeftab720
+
+\f1 \cf4 \cb6 Two roads diverged in a yellow wood,\
+And sorry I could not travel both\
+And be one traveler, long I stood\
+And looked down one as far as I could.\
+\pard\pardeftab720
+
+\f0 \cf0 \cb1 \
+\
+To run MapReduce, we first split the dataset into small pieces. For this example, we will split the dataset by the four lines of the poem:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clwWidth3980\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2160
+\clvertalc \clcbpat7 \clwWidth3480\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clcbpat7 \clwWidth3560\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx6480
+\clvertalc \clcbpat7 \clwWidth4140\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #1\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "Two roads diverged in a yellow wood,"\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #2\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And sorry I could not travel both"\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #3\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And be one traveler, long I stood"\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #4\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And looked down one as far as I could."\cell \lastrow\row
+\pard\pardeftab720
+\cf0 \
+\
+As part of the input to any MapReduce program, a user will provide a 
+\f1 \cf4 map()
+\f0 \cf0  function. This function will map the input into a series of 
+\f1 \cf4 (key, value)
+\f0 \cf0  pairs. For this example, let the 
+\f1 \cf4 map()
+\f0 \cf0  function simply count the number of each letter (a-z) in the data set.\
+\
+This MapReduce algorithm will spawn 
+\b 1 process per data set
+\b0  and run the 
+\f1 \cf4 map()
+\f0 \cf0  function on each dataset:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clwWidth3780\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2160
+\clvertalc \clcbpat7 \clwWidth3780\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clcbpat7 \clwWidth3800\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx6480
+\clvertalc \clcbpat7 \clwWidth3800\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #1\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "Two roads diverged in a yellow wood,"\
+pid = 1001\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 0, c: 0, d: 4, e: 3, f: 0, g: 1, h: 0, i: 2, j: 0, k: 0, l: 2, m: 0, n: 1, o: 5, p: 0, q: 0, r: 2, s: 1, t: 1, u: 0, v: 1, w: 3, x: 0, y: 1, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #2\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And sorry I could not travel both"\
+pid = 1002\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 1, c: 1, d: 2, e: 1, f: 0, g: 0, h: 1, i: 1, j: 0, k: 0, l: 2, m: 0, n: 2, o: 4, p: 0, q: 0, r: 3, s: 1, t: 3, u: 1, v: 1, w: 0, x: 0, y: 1, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #3\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And be one traveler, long I stood"\
+pid = 1003\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 1, c: 0, d: 2, e: 4, f: 0, g: 1, h: 0, i: 1, j: 0, k: 0, l: 2, m: 0, n: 3, o: 4, p: 0, q: 0, r: 2, s: 1, t: 2, u: 0, v: 1, w: 0, x: 0, y: 0, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #4\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And looked down one as far as I could."\
+pid = 1004\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 4, b: 0, c: 1, d: 4, e: 2, f: 1, g: 0, h: 0, i: 1, j: 0, k: 1, l: 2, m: 0, n: 3, o: 5, p: 0, q: 0, r: 1, s: 2, t: 0, u: 1, v: 0, w: 1, x: 0, y: 0, z: 0\cell \lastrow\row
+\pard\pardeftab720
+\cf0 \
+\
+The 
+\f1 \cf4 map()
+\f0 \cf0  processes produce its output. And those output is the initial input of the 
+\f1 \cf4 reduce()
+\f0 \cf0  fucntion. By using MapReduce Algorithm, the 
+\f1 \cf4 reduce()
+\f0 \cf0  function then collects and combine the output of each process to form a single data set to return to the user. The output of 
+\f1 \cf4 reduce()
+\f0 \cf0  should be a collection of values in the same domain of its input. In particular, for this example, the 
+\f1 \cf4 reduce()
+\f0 \cf0  function is called every time the same key is seen from two different processes. And our reduce function will simply add the values of the two keys (eg: 
+\f1 \cf4 a: 2
+\f0 \cf0  and 
+\f1 \cf4 a: 4
+\f0 \cf0  will result in 
+\f1 \cf4 a: 6
+\f0 \cf0 ).\
+\
+All 
+\f1 \cf4 reduce()
+\f0 \cf0  calls are run in a single worker thread, within the process that called the MapReduce framework initially. The 
+\f1 \cf4 reduce()
+\f0 \cf0  calls are not performed in a new or recycled 
+\f1 \cf4 map()
+\f0 \cf0  process. Adding to our diagram:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clwWidth3780\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2160
+\clvertalc \clcbpat7 \clwWidth3780\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clvertalc \clcbpat7 \clwWidth3800\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx6480
+\clvertalc \clcbpat7 \clwWidth3800\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #1\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "Two roads diverged in a yellow wood,"\
+pid = 1001\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 0, c: 0, d: 4, e: 3, f: 0, g: 1, h: 0, i: 2, j: 0, k: 0, l: 2, m: 0, n: 1, o: 5, p: 0, q: 0, r: 2, s: 1, t: 1, u: 0, v: 1, w: 3, x: 0, y: 1, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #2\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And sorry I could not travel both"\
+pid = 1002\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 1, c: 1, d: 2, e: 1, f: 0, g: 0, h: 1, i: 1, j: 0, k: 0, l: 2, m: 0, n: 2, o: 4, p: 0, q: 0, r: 3, s: 1, t: 3, u: 1, v: 1, w: 0, x: 0, y: 1, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #3\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And be one traveler, long I stood"\
+pid = 1003\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 2, b: 1, c: 0, d: 2, e: 4, f: 0, g: 1, h: 0, i: 1, j: 0, k: 0, l: 2, m: 0, n: 3, o: 4, p: 0, q: 0, r: 2, s: 1, t: 2, u: 0, v: 1, w: 0, x: 0, y: 0, z: 0\cell 
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 Data Set #4\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Input
+\b0 : "And looked down one as far as I could."\
+pid = 1004\
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 map()
+\f0 \cf0  
+\b Output
+\b0 : a: 4, b: 0, c: 1, d: 4, e: 2, f: 1, g: 0, h: 0, i: 1, j: 0, k: 1, l: 2, m: 0, n: 3, o: 5, p: 0, q: 0, r: 1, s: 2, t: 0, u: 1, v: 0, w: 1, x: 0, y: 0, z: 0\cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clmgf \clvertalc \clcbpat7 \clwWidth15520\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2160
+\clmrg \clvertalc \clcbpat7 \clwWidth15520\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx4320
+\clmrg \clvertalc \clcbpat7 \clwWidth15520\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx6480
+\clmrg \clvertalc \clcbpat7 \clwWidth15520\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+\cf0 \ul \ulc0 pid = 1000, worker thread\ulnone \
+\pard\intbl\itap1\pardeftab720\qc
+
+\f1 \cf4 reduce()
+\f0 \cf0 , 
+\f1 \cf4 reduce()
+\f0 \cf0 , 
+\f1 \cf4 reduce()
+\f0 \cf0 , and more 
+\f1 \cf4 reduce()
+\f0 \cf0 'ing\
+
+\f1 \cf4 ... ... ...
+\f0 \cf0 \
+\pard\intbl\itap1\pardeftab720\qc
+
+\b \cf0 Result
+\b0 : a: 10, b: 2, c: 2, d: 12, e: 10, f: 1, g: 2, h: 1, i: 5, j: 0, k: 1, l: 8, m: 0, n: 9, o: 18, p: 0, q: 0, r: 8, s: 5, t: 6, u: 2, v: 3, w: 4, x: 0, y: 2, z: 0\cell 
+\pard\intbl\itap1\cell 
+\pard\intbl\itap1\cell 
+\pard\intbl\itap1\cell \lastrow\row
+\pard\pardeftab720
+\cf0 \
+\
+For each unique key, 
+\f1 \cf4 reduce()
+\f0 \cf0  will be called multiple times, until the multiple values outputted from the 
+\f1 \cf4 map()
+\f0 \cf0 s are reduced down into a single value for that key. As an example, consider the key 'a'. The way the 
+\f1 \cf4 reduce()
+\f0 \cf0  functions is called might depend on the timing of when the processes finish, but one possible sequence of operations is shown in the diagram below. (\ul This depicts what happens only for the key 'a'; the other keys would be similar.\ulnone )\
+\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clcbpat7 \clwWidth15520\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrs\brdrw20\brdrcf8 \clbrdrl\brdrs\brdrw20\brdrcf8 \clbrdrb\brdrs\brdrw20\brdrcf8 \clbrdrr\brdrs\brdrw20\brdrcf8 \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+
+\f2 \cf0 \pard\intbl\itap1\pardeftab720\qc
+
+\f0 \cf0 \cell \lastrow\row
+\pard\pardeftab720
+\cf0 \
+In this MP, you will be provided the data sets (already split up for you) and several example 
+\f1 \cf4 map()
+\f0 \cf0  and 
+\f1 \cf4 reduce()
+\f0 \cf0  functions. You will need to:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf0 {\listtext	\'95	}Create the 
+\f1 \cf4 map()
+\f0 \cf0  processes. 
+\i System call: fork()
+\i0 \
+{\listtext	\'95	}Read the result of the 
+\f1 \cf4 map()
+\f0 \cf0  processes over a pipe or fifo. 
+\i System call: pipe() or fifo()
+\i0 \
+{\listtext	\'95	}Process the results of each process using only a single thread, by using I/O multiplexing. 
+\i System call: select() or poll()
+\i0 \
+{\listtext	\'95	}Give the current set of completed results back to the user at any time, even if some of the 
+\f1 \cf4 map()
+\f0 \cf0  processes are not yet finished.\
+\pard\pardeftab720\sa240
+\cf0 \
+\pard\pardeftab720
+\cf0 \
+\pard\pardeftab720\sa398
+
+\b\fs48 \cf0 The MP\
+\pard\pardeftab720\sa425
+
+\fs32 \cf0 What we provide for you:\
+\pard\pardeftab720\sa240
+
+\b0\fs24 \cf0 Besides the tester programs, we provide you a data store 
+\f1 \cf4 libds
+\f0 \cf0  that allows you to store the results of your MapReduce. 
+\f1 \cf4 libds
+\f0 \cf0  includes 
+\f1 \cf4 _get()
+\f0 \cf0 , 
+\f1 \cf4 _put()
+\f0 \cf0 , 
+\f1 \cf4 _update()
+\f0 \cf0 , and 
+\f1 \cf4 _delete()
+\f0 \cf0  operations that work similarly to the dictionary you built in MP1. However, these functions provide revision numbers to each key. When you update or delete a key, you are required to provide the latest revision number you know about. If the revision number does not match what is in the data store, the update or delete operation will notify you that it could not complete the operation because the data your program knew about is out of date. {\field{\*\fldinst{HYPERLINK "file:///Users/Bobby/Dropbox/CS241%20SP2014/mp7/doc/libds_8c.html"}}{\fldrslt \cf5 \ul \ulc5 You can find the full API to 
+\f1 \cf4 \ulnone libds
+\f0 \cf5 \ul \ulc5  here.}} \uc0\u8232 \u8232 You will find we also provide a 
+\f1 \cf4 read_from_fd()
+\f0 \cf0  helper function, which we will explain later in this file.\
+\pard\pardeftab720\sa425
+
+\b\fs32 \cf0 What you must do for this MP:\
+[Part 1]\
+\pard\pardeftab720
+
+\b0\fs24 \cf0 This MP is divided into two parts. First, you must complete the five core functions that make up 
+\f1 \cf4 libmapreduce
+\f0 \cf0 :\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls2\ilvl0
+\b \cf0 {\listtext	\'95	}mapreduce_init()
+\b0  
+\f1 \cf4 \cb6 void mapreduce_init(mapreduce_t *mr,\
+{\listtext	\'95	}\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0void (*mymap)(int, const char *),\
+{\listtext	\'95	}\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0const char *(*myreduce)(const char *, const char *)); \uc0\u8232 
+\f0 \cf0 \cb1 This function will be the first call made to the 
+\f1 \cf4 libmapreduce
+\f0 \cf0  library. You should put any initialization logic here. (
+\i You will likely want to store the 
+\f3 \cf4 mymap
+\f0 \cf0  and 
+\f3 \cf4 myreduce
+\f0 \cf0  functions inside 
+\f3 \cf4 mr
+\f0 \cf0  for later use; 
+\f3 \cf4 mapreduce_init()
+\f0 \cf0  should not call either of these functions.
+\i0 )\uc0\u8232 \u8232 \u8232 The 
+\f1 \cf4 mymap
+\f0 \cf0  function pointer is a pointer to a function of the following format: \uc0\u8232 
+\f1 \cf4 \cb6 void map(int fd, const char *data) \uc0\u8232 
+\f0 \cf0 \cb1 ...where 
+\f1 \cf4 fd
+\f0 \cf0  is the file descriptor to which 
+\f1 \cf4 map()
+\f0 \cf0  will write the results of the 
+\f1 \cf4 map()
+\f0 \cf0  operation on the dataset 
+\f1 \cf4 data
+\f0 \cf0 . The 
+\f1 \cf4 map()
+\f0 \cf0  function will always write the 
+\f1 \cf4 (key, value)
+\f0 \cf0  result to 
+\f1 \cf4 fd
+\f0 \cf0  in the format 
+\f1 \cf4 key: value\\n
+\f0 \cf0 . As a 
+\f1 \cf4 printf()
+\f0 \cf0 , this would be: 
+\f1 \cf4 \cb6 printf("%s: %s\\n", key, value); \uc0\u8232 
+\f0\b \cf0 \cb1 You do not need to write 
+\f4 \cf4 mymap()
+\f0 \cf0 , it is passed in as a function pointer to 
+\f4 \cf4 mapreduce_init()
+\f0 \cf0 .
+\b0  You should note that 
+\f1 \cf4 map()
+\f0 \cf0  will always close the fd passed to it before returning.\uc0\u8232 \u8232 \u8232 
+\f1 \cf4 myreduce
+\f0 \cf0  is a pointer to a function of the following format: 
+\f1 \cf4 \cb6 const char *reduce(const char *value1, const char *value2) \uc0\u8232 
+\f0 \cf0 \cb1 ...where 
+\f1 \cf4 reduce()
+\f0 \cf0  will return 
+\b a newly 
+\f4 \cf4 malloc()
+\f0 \cf0 'd region of memory
+\b0  that is the "reduction" of 
+\f1 \cf4 value1
+\f0 \cf0  and 
+\f1 \cf4 value2
+\f0 \cf0 . Since this function will 
+\f1 \cf4 malloc()
+\f0 \cf0  new memory, you will need to 
+\f1 \cf4 free()
+\f0 \cf0  this memory at some later point.\uc0\u8232 \u8232 
+\b You do not need to write 
+\f4 \cf4 myreduce
+\f0 \cf0 , it is passed in as a function pointer to 
+\f4 \cf4 mapreduce_init()
+\f0 \cf0 .
+\b0 \uc0\u8232 \u8232 \
+\ls2\ilvl0
+\b {\listtext	\'95	}mapreduce_map_all()
+\b0  
+\f1 \cf4 \cb6 void mapreduce_map_all(mapreduce_t *mr, const char **values);\uc0\u8232 
+\f0 \cf0 \cb1 This is the main function of the first part of this MP. 
+\b This function will only be called once.
+\b0 \uc0\u8232 \u8232 As input to this function, 
+\f1 \cf4 values
+\f0 \cf0  contains a NULL-terminated array of C-strings. (If there are three values, 
+\f1 \cf4 values[0]
+\f0 \cf0 , 
+\f1 \cf4 values[1]
+\f0 \cf0 , 
+\f1 \cf4 values[2]
+\f0 \cf0  will point to C-strings of the data sets each of your 
+\f1 \cf4 map()
+\f0 \cf0  processes should use and 
+\f1 \cf4 value[3]
+\f0 \cf0  will be equal to 
+\f1 \cf4 NULL
+\f0 \cf0 .) Each of the strings in 
+\f1 \cf4 values
+\f0 \cf0  will be one data set.\uc0\u8232 \u8232 In this function, you must launch 
+\b one process per data set
+\b0 , and one worker thread (
+\b the worker is a thread within the process that called mapreduce_map_all()
+\b0 ). Each new process will call 
+\f1 \cf4 map()
+\f0 \cf0  on one data set. The worker thread will use multiple calls to 
+\f1 \cf4 reduce()
+\f0 \cf0  to process the data coming back from the 
+\f1 \cf4 map()
+\f0 \cf0  processes you have launched.\uc0\u8232 \u8232 In the description of the 
+\f1 \cf4 map()
+\f0 \cf0  function, you saw that you will need to pass a file descriptor 
+\f1 \cf4 fd
+\f0 \cf0  into 
+\f1 \cf4 map()
+\f0 \cf0 . This file descriptor should be the writing side of a pipe or fifo that you create in this function. Once 
+\f1 \cf4 fork()
+\f0 \cf0 'd and the pipe has been set up, the child process should need to only run code similar to the following: \uc0\u8232 
+\f1 \cf4 \cb6 \{\
+{\listtext	\'95	}\'a0 /* child */\
+{\listtext	\'95	}\'a0 map(fd, values[i]);\
+{\listtext	\'95	}\'a0 exit(0); /* exit the child process */\
+{\listtext	\'95	}\}\
+{\listtext	\'95	}\uc0\u8232 
+\f0 \cf0 \cb1 \uc0\u8232 Since 
+\f1 \cf4 mapreduce_map_all()
+\f0 \cf0  is only called once, you may find it easier to launch all the processes, set up all the pipes, and then launch the 
+\b one worker thread
+\b0  that will be reading the 
+\f1 \cf4 map()
+\f0 \cf0  results from each of the child processes. Since you have only a single thread, and 
+\b must
+\b0  read results as soon as they're available, you are unable to simply make a blocking 
+\f1 \cf4 read()
+\f0 \cf0  call.\uc0\u8232 \u8232 Instead, you should use 
+\f1 \cf4 select()
+\f0 \cf0  or 
+\f1 \cf4 poll()
+\f0 \cf0  to query which of the file descriptors are ready to be read without blocking. Since you are reading from 
+\f1 \cf4 N
+\f0 \cf0  different streams, it may be useful to create 
+\f1 \cf4 N
+\f0 \cf0  buffers (one for each process). If you create one buffer per process, we have provided a helper function for to assist with reading the results of the 
+\f1 \cf4 map()
+\f0 \cf0  processes: 
+\f1 \cf4 \cb6 int read_from_fd(int fd, char *buffer, mapreduce_t *mr) \uc0\u8232 
+\f0 \cf0 \cb1 ...this function will 
+\f1 \cf4 read()
+\f0 \cf0  data from 
+\f1 \cf4 fd
+\f0 \cf0  and make a call to 
+\f1 \cf4 process_key_value()
+\f0 \cf0  for each 
+\f1 \cf4 (key, value)
+\f0 \cf0  that was read. If a line was only partially read, this function will leave the un-processed data in 
+\f1 \cf4 buffer
+\f0 \cf0  and expects it to be read the next time the function is called. This function expects 
+\f1 \cf4 buffer
+\f0 \cf0  to initially be of size 
+\f1 \cf4 BUFFER_SIZE + 1
+\f0 \cf0  and for 
+\f1 \cf4 buffer[0] == '\\0'
+\f0 \cf0 . Finally, the 
+\f1 \cf4 mr
+\f0 \cf0  pointer is simply passed-through to 
+\f1 \cf4 process_key_value()
+\f0 \cf0  as it may be useful to you, as you will need to write the logic to process the key and the value.\uc0\u8232 \u8232 A call to 
+\f1 \cf4 read_from_fd()
+\f0 \cf0  may look like 
+\f1 \cf4 read_from_fd(fds[i], buffer[i], mr)
+\f0 \cf0 . The return value of 
+\f1 \cf4 read_from_fd()
+\f0 \cf0  will be 
+\f1 \cf4 1
+\f0 \cf0  if data was successfully read. You'll notice that this function will blindly attempt to 
+\f1 \cf4 read()
+\f0 \cf0  from the 
+\f1 \cf4 fd
+\f0 \cf0 . 
+\b It's up to you to only call this function if data is available to be 
+\f4 \cf4 read()
+\f0 \cf0 .
+\b0  \uc0\u8232 \u8232 \u8232 \ul Regardless of whether you choose to use 
+\f1 \cf4 \ulnone read_from_fd()
+\f0 \cf0 \ul \ulc0  or write your own function, each time a 
+\f1 \cf4 \ulnone (key, value)
+\f0 \cf0 \ul \ulc0  pair is received, it must be updated in your internal data structure.\ulnone  If the 
+\f1 \cf4 (key, value)
+\f0 \cf0  contains a key you have never seen before, this 
+\f1 \cf4 (key, value)
+\f0 \cf0  should be stored. If the 
+\f1 \cf4 (key, value)
+\f0 \cf0  contains a key already stored, you must call 
+\f1 \cf4 reduce()
+\f0 \cf0  on the stored value and the newly read value and then update the value of 
+\f1 \cf4 key
+\f0 \cf0  to the value returned by 
+\f1 \cf4 reduce()
+\f0 \cf0 .\uc0\u8232 \u8232 
+\f1 \cf4 mapreduce_map_all()
+\f0 \cf0  
+\b MUST NOT
+\b0  block waiting for the thread or processes to finish. In other words, typically,
+\f1 \cf4 mapreduce_map_all()
+\f0 \cf0  will return before the child processes and the worker thread have completed. \uc0\u8232 \
+\ls2\ilvl0
+\b {\listtext	\'95	}mapreduce_reduce_all()
+\b0  
+\f1 \cf4 \cb6 void mapreduce_reduce_all(mapreduce_t *mr)\uc0\u8232 
+\f0\b \cf0 \cb1 This function will always be called only once
+\b0 , and will always be called sometime after 
+\f1 \cf4 mapreduce_map_all()
+\f0 \cf0  is called.\uc0\u8232 \u8232 This function should block until all 
+\f1 \cf4 map()
+\f0 \cf0 'ing and 
+\f1 \cf4 reduce()
+\f0 \cf0 'ing has completed. \uc0\u8232 \
+\ls2\ilvl0
+\b {\listtext	\'95	}mapreduce_get_value()
+\b0  
+\f1 \cf4 \cb6 const char *mapreduce_get_value(mapreduce_t *mr, const char *result_key)\uc0\u8232 
+\f0 \cf0 \cb1 This function should return the current value of 
+\f1 \cf4 result_key
+\f0 \cf0 . If the 
+\f1 \cf4 result_key
+\f0 \cf0  does not exist, return 
+\f1 \cf4 NULL
+\f0 \cf0 . If a string is returned, it should be a newly allocated string that will need to be freed by the caller. This function may be called at any time, including while the 
+\f1 \cf4 map()
+\f0 \cf0  processes are working (
+\i as more 
+\f3 \cf4 map()
+\f0 \cf0 's finish, the 
+\f3 \cf4 value
+\f0 \cf0  for the same 
+\f3 \cf4 key
+\f0 \cf0  will likely change between calls to this function).
+\i0  \uc0\u8232 \
+\ls2\ilvl0
+\b {\listtext	\'95	}mapreduce_destroy()
+\b0  
+\f1 \cf4 \cb6 void mapreduce_destroy(mapreduce_t *mr)\uc0\u8232 
+\f0 \cf0 \cb1 Free all your memory. :) \'a0Will always be called last.\
+\pard\pardeftab720\sa425
+
+\b\fs32 \cf0 [Part 2]\
+\pard\pardeftab720
+
+\b0\fs24 \cf0 Secondly, you must complete the 
+\f1 \cf4 map()
+\f0 \cf0  and 
+\f1 \cf4 reduce()
+\f0 \cf0  functions for 
+\f1 \cf4 test6.c
+\f0 \cf0 , which aims to find the longest word in the entire text of 
+\i Alice in Wonderland
+\i0 :\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls3\ilvl0
+\b \cf0 {\listtext	\'95	}map()
+\b0  
+\f1 \cf4 \cb6 void map(int fd, const char *data)\uc0\u8232 
+\f0 \cf0 \cb1 This function should take input from 
+\f1 \cf4 char *data
+\f0 \cf0  and then map the longest word to the key: 
+\f1 \cf4 long_key
+\f0 \cf0 . Finally, it should write the 
+\f1 \cf4 key: value
+\f0 \cf0  pair into the file with the form of 
+\f1 \cf4 long_key: XXXXXXXXX
+\f0 \cf0 . A word is defined as a contiguous block of alphabetic characters ([a-zA-Z]+). You can use the function 
+\f1 \cf4 isalpha()
+\f0 \cf0  to test a single character.\
+\ls3\ilvl0
+\b {\listtext	\'95	}reduce()
+\b0  
+\f1 \cf4 \cb6 const char *reduce(const char *value1, const char *value2)\uc0\u8232 
+\f0 \cf0 \cb1 This function should take two words and reduce to the longer of the two.\
+\pard\pardeftab720
+\cf0 For the second part, the test cases that we have provided are good examples for you to follow, especially 
+\f1 \cf4 test4.c
+\f0\b\fs48 \cf0 \
+\pard\pardeftab720\sa398
+\cf0 Compile and Run\
+\pard\pardeftab720
+
+\b0\fs24 \cf0 As always, compile using:
+\f1 \cf4 \cb6 \
+make clean\
+make\
+
+\f0 \cf0 \cb1 We provide five test cases:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls4\ilvl0
+\f1 \cf4 {\listtext	\'95	}test1
+\f0 \cf0 : One dataset and nothing to 
+\f1 \cf4 reduce()
+\f0 \cf0 .\
+\ls4\ilvl0
+\f1 \cf4 {\listtext	\'95	}test2
+\f0 \cf0 : Two datasets with only one key, resulting in one 
+\f1 \cf4 reduce()
+\f0 \cf0 .\
+\ls4\ilvl0
+\f1 \cf4 {\listtext	\'95	}test3
+\f0 \cf0 : A tester that runs the example in the beginning of this file (first four lines of Robert Frost's poem).\
+\ls4\ilvl0
+\f1 \cf4 {\listtext	\'95	}test4
+\f0 \cf0 : A tester running MapReduce on the entire text of 
+\i Alice in Wonderland
+\i0 .\
+\ls4\ilvl0
+\f1 \cf4 {\listtext	\'95	}test5
+\f0 \cf0 : A tester testing if calls to 
+\f1 \cf4 mapreduce_get_value()
+\f0 \cf0  update as 
+\f1 \cf4 map()
+\f0 \cf0  processes finish at different times.\
+\pard\pardeftab720
+
+\i \cf0 (NOTE: ./test5 may be slightly different depending on how you create your IPC mechanism.)
+\i0 \
+\
+From test1 to test 5, the expected outputs are:
+\f1 \cf4 \cb6 \
+[netid@linux1 mp7]$ ./test1\
+letters: 8\
+[netid@linux1 mp7]$ ./test2\
+letters: 21\
+[netid@linux1 mp7]$ ./test3\
+a: 10\
+b: 2\
+c: 2\
+d: 12\
+e: 10\
+f: 1\
+g: 2\
+h: 1\
+i: 5\
+j: 0\
+k: 1\
+l: 8\
+m: 0\
+n: 9\
+o: 18\
+p: 0\
+q: 0\
+r: 8\
+s: 5\
+t: 6\
+u: 2\
+v: 3\
+w: 4\
+x: 0\
+y: 2\
+z: 0\
+[netid@linux1 mp7]$ ./test4\
+the: 1804\
+and: 912\
+alice: 385\
+some-word-that-wont-exist: (null)\
+[netid@linux1 mp7]$ ./test5\
+Sleeping for 6 seconds (job #1)...\
+Sleeping for 5 seconds (job #2)...\
+Sleeping for 4 seconds (job #3)...\
+Sleeping for 3 seconds (job #4)...\
+value: (null)\
+value: (null)\
+value: (null)\
+value: 1\
+value: 2\
+value: 3\
+value: 4\
+value: 4\
+value: 4\
+value: 4\
+\pard\pardeftab720\sa398
+
+\f0\b\fs48 \cf0 \cb1 Grading\
+\pard\pardeftab720\sa240
+
+\b0\fs24 \cf0 For 
+\f1 \cf4 valgrind
+\f0 \cf0  memory grading, we will only be testing if your program cleaned up all memory in your original, parent process. You should run:\
+\pard\pardeftab720
+
+\f1 \cf4 \cb6 valgrind --child-silent-after-fork=yes --leak-check=full ./test#\
+\pard\pardeftab720
+
+\f0 \cf0 \cb1 ...when running your valgrind tests.\
+\
+\pard\pardeftab720
+
+\b \cf0 \ul \ulc0 Finally, remember that big red warning at the top of this page.
+\b0 \ulnone \
+\pard\pardeftab720\sa240
+\cf0 \
+\pard\pardeftab720\sa398
+
+\b\fs48 \cf0 Grading, Submission, and Other Details\
+\pard\pardeftab720
+
+\b0\fs24 \cf0 Please read {\field{\*\fldinst{HYPERLINK "https://courses.engr.illinois.edu/cs241/mp_policy.html"}}{\fldrslt \cf5 \ul \ulc5 policy on all MPs}} on the course website for details on grading, submission, and other topics that are shared between all MPs in CS 241.}
